@@ -4,6 +4,6 @@ const Colors = {
   primary3: '#131590',
   primary4: '#0f1178',
   accent1: '#ef9929',
-}
+};
 
 export default Colors;
