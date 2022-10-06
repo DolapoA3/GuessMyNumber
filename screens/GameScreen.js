@@ -1,9 +1,11 @@
-import { useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, StyleSheet, Alert } from 'react-native';
 
 import NumberContainer from '../components/game/NumberContainer';
+import Card from '../components/ui/Card';
 import Title from '../components/ui/Title';
 import MainButton from '../components/ui/MainButton';
+import InstructionText from '../components/ui/InstructionText';
 
 function generateRandomBetween(min, max, exclude) {
   const rndNum = Math.floor(Math.random() * (max - min)) + min;
@@ -18,13 +20,19 @@ function generateRandomBetween(min, max, exclude) {
 let minBoundary = 1;
 let maxBoundary = 100;
 
-function GameScreen({ userNumber }) {
+function GameScreen({ userNumber, onGameOver }) {
   const initialGuess = generateRandomBetween(
-    minBoundary,
-    maxBoundary,
+    1,
+    100,
     userNumber
   );
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
+
+  useEffect(() => {
+    if (currentGuess === userNumber) {
+      onGameOver();
+    }
+  }, [currentGuess, userNumber, onGameOver]);
 
   function nextGuessHandler(direction) {
     if (
@@ -35,7 +43,7 @@ function GameScreen({ userNumber }) {
         { text: 'Try again!', style: 'cancel' },
       ]);
       return;
-    }
+    } 
 
     if (direction === 'lower') {
       maxBoundary = currentGuess;
@@ -54,9 +62,8 @@ function GameScreen({ userNumber }) {
     <View style={styles.screen}>
       <Title>Opponent's Guess</Title>
       <NumberContainer>{currentGuess}</NumberContainer>
-      <Text></Text>
-      <View>
-        <Text>Higher or lower?</Text>
+      <Card>
+        <InstructionText>Higher or lower?</InstructionText>
         <View>
           <MainButton onPress={nextGuessHandler.bind(this, 'lower')}>
             -
@@ -65,7 +72,7 @@ function GameScreen({ userNumber }) {
             +
           </MainButton>
         </View>
-      </View>
+      </Card>
       <View>{/*Log Rounds*/}</View>
     </View>
   );
